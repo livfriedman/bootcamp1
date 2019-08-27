@@ -8,7 +8,8 @@ var listingData, server;
 
 var requestHandler = function(request, response) {
   var parsedUrl = url.parse(request.url);
-
+  
+    
   /*
     Your request handler should send listingData in the JSON format as a response if a GET request 
     is sent to the '/listings' path. Otherwise, it should send a 404 error. 
@@ -24,6 +25,19 @@ var requestHandler = function(request, response) {
     HINT: Explore the list of MIME Types
     https://developer.mozilla.org/en-US/docs/Web/HTTP/Basics_of_HTTP/MIME_types/Complete_list_of_MIME_types
    */
+  
+  // if GET request and '/listings' path 
+  if (request.method === 'GET' && parsedUrl === '/listings'){
+	  // send listingData in JSON format as response 
+	  response.json(listingData);
+  }
+  //otherwise
+  else {
+	  // send a 404 error 
+	  response.statusCode = 404; 
+  }
+  response.end(); 
+
 };
 
 fs.readFile('listings.json', 'utf8', function(err, data) {
@@ -36,16 +50,28 @@ fs.readFile('listings.json', 'utf8', function(err, data) {
 
     HINT: Read up on JSON parsing Node.js
    */
+   
+   
 
     //Check for errors
-  
+	if (err) throw err;
+	  
 
    //Save the sate in the listingData variable already defined
+   listingData = data; 
   
 
   //Creates the server
+  server = http.createServer(requestHandler);
   
   //Start the server
-
+  startServer(); 
 
 });
+
+function startServer() {
+	server.listen(port,function(){
+		console.log("Server listening on: http://127.0.0.1:" + port);
+	}); 
+}
+	
